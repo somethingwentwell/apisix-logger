@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+
+  logger:
+    image: warching/fastapi
+    ports:
+      - "8080:8080"
+    command:
+      - /bin/bash
+      - -c
+      - |
+          uvicorn http_log_server:app --reload --host 0.0.0.0 --port 8080
+    environment:
+      - WATCHFILES_FORCE_POLLING=true
+    volumes:
+      - ./http_log_server.py:/app/http_log_server.py
+    networks:
+      - apisix
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    deploy:
+      replicas: 1
+
+networks:
+  apisix:
+    driver: bridge
